@@ -32,3 +32,32 @@ def mostrar_venta():
                     return
 
                 cursor = conexion.cursor()
+                consulta = """
+                    INSERT INTO VENTAS
+                    (Producto, Cantidad)
+                    VALUES (%s, %s)
+                """
+                cursor.execute(
+                    consulta,
+                    (producto, int(cantidad))
+                )
+                conexion.commit()
+                st.success(
+                    "Venta registrada correctamente."
+                )
+
+            except Exception as error:
+                if conexion is not None:
+                    conexion.rollback()
+                st.error(
+                    f"Error al registrar la venta: {error}"
+                )
+
+            finally:
+                if cursor is not None:
+                    cursor.close()
+                if (
+                    conexion is not None
+                    and conexion.is_connected()
+                ):
+                    conexion.close()
